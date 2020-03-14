@@ -84,9 +84,56 @@
     (add-to-kb (dash-binary-keys wff) wff)
 )
 
+(defun answer-whq (wff)
+    (setq result (gethash wff *KB* ))
+    (if (eq result nil)
+        (print nil)
+        (print result)
+    )
+)
+
+(defun check-for-negation (wff)
+   ;;check if query is length 2, thus we preform predicate testing
+   (if (eq (list-length wff) 2)
+        (has-predicate wff)
+        (and (not (eq '- (car wff)))(member 'Robbie wff)) ;;else, we check if Robbie is included, as if he is, Robbie should theoretically
+                            ;; know everything about himself. 
+   )
+)
+(defun answer-question (wff)
+    (setq result (gethash wff *KB*))
+     (cond 
+		((not (eq nil result)) (format nil "~a" result))
+        ((and (eq nil result) (check-for-negation wff)) (format nil "(not (~a))" wff))
+        ((eq result nil) (format nil "UNKNOWN"))
+		(t (format nil "UNKNOWN"))
+	)
+)
+
 (store-fact '(Owns Alice Snoopy))
-(store-fact '(Owns Bobby Snoopy))
-(store-fact '(Dog Snoopy))
+(store-fact '(Is_a_robot Robbie))
+(print "-------")
+(answer-whq '(- Fucker))
+
+; creating interactive repl 
+
+(defun print-fun (f a) ;evaluate and print function "E, P"
+	(format t "(~a ~a) => ~a ~%" f a (funcall f a))
+)
+(defun repl1(f) ;repl for part two. Enter elements in a list. Ex: (Robot Robbie)
+	(format t "Enter arguments for ~a (q to stop): " f)
+	(finish-output nil)
+	(setq arg1 (read))
+	(if (equalp (format nil "~a" arg1) "q") ;check for q
+		nil
+		(if (print-fun f arg1)
+			nil
+			(repl1 f)
+		)		
+	)
+
+)
+(repl1 'answer-question)
 
 ;(setq init (dash-nary-keys '(Owns Alice Snoopy)))
 ;print init)
@@ -94,6 +141,6 @@
 ;(print test)
 ;(store-fact '(Robot Robbie))
 ;(store-fact '(Robot Billy))
-(loop for k being each hash-key of *KB*
-	 do (format t "~%~a ~a~%" k (gethash k *KB*))
-)
+;(loop for k being each hash-key of *KB*
+;	 do (format t "~%~a ~a~%" k (gethash k *KB*))
+;)
