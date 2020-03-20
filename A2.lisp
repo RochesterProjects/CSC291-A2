@@ -33,17 +33,7 @@
     toreturn
 )
 
-(defun append(l1 l2) ;my append, two lists, l2 being appended to l1 .
-	(append-aux (reverse l1) l2) ;reversing the list so conforms with -aux
-)
-(defun append-aux(l a)
-	(if (eq l nil)
-		a
-		(append-aux (cdr l) (cons (car l) a)  ) ;building a reversed appended list
 
-	)
-
-)
 
 (defun addtoend(n l) ;add value to end of list
 	(setq l1 (reverse(cons n (reverse l) ) )) ;building a new list that first adds the element to the front of the reversed list, then reverses it
@@ -109,6 +99,12 @@
         (format nil "NIL")
         (format nil "~a" result)
     )
+)
+
+(defun has-predicate (wff) ;; for each key in KB, check if the first element is equal to the first element of wff.
+	(loop for k being each hash-key of *KB*
+		thereis (and (not (equalp - (car wff))) (equalp (car k) (car wff))) 
+	)
 )
 
 (defun check-for-negation (wff)
@@ -184,6 +180,9 @@
     toreturn
 )
 
+;;helper function in transofrming (not(...)) statements into
+;; (it is not the case that ...) statements
+;;additional adds the anything sentence if the (.. .. -) form appears.
 (defun print-nice-negation (wff result)
     (setq toreturn '())
     (if (eq result nil)
@@ -200,7 +199,7 @@
             (setq toreturn (cons "Is" toreturn))
             (setq toreturn (cons "It" toreturn))
     (if (equalp (last toreturn) '(-))
-        (setf (nth (- (list-length toreturn) 1) toreturn) "NOTHING") ;;checks for the last dash
+        (setf (nth (- (list-length toreturn) 1) toreturn) "ANYTHING") ;;checks for the last dash
         nil
     )       
         
@@ -230,19 +229,14 @@
 (store-fact '(Is_concious Alice))
 (store-fact '(Is_a_robot Robbie))
 (store-fact '(Is_clever Robbie))
+(store-fact '(Is_clever Alice  ))
 (store-fact '(Likes Robbie Snoopy))
 (store-fact '(Likes Robbie Alice))
 (store-fact '(Likes Alice Snoopy))
 (store-fact '(Likes Alice Freddy))
 (store-fact '(Likes Alice Robbie))
-(print "-------")
-;(answer-whq '(- Robbie))
-(print (answer-question-nicely '(Owns Alice Snoopy)))
-(print (answer-question-nicely '(- Robbie)))
-(print (answer-question-nicely '(Hates Robbie -)))
-(print (answer-question-nicely '(- Robbie BrooklynBridge)))
-(print (answer-question-nicely '(Likes Robbie Freddy)))
-
+(store-fact '(Likes Snoopy Freddy))
+(store-fact '(Likes Freddy Snoopy))
 
 
 ; creating interactive repl 
@@ -262,4 +256,15 @@
 	)
 
 )
+
+;;running the functions via repl
+(format t "------------------------ ~%")
+(repl1 'answer-whq)
+(format t "------------------------ ~%")
+
+(repl1 'answer-question)
+(format t "------------------------ ~%")
+
+(repl1 'answer-question-nicely)
+
 
