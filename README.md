@@ -2,6 +2,7 @@
 
 # To run 
 run your favorite CLISP complier, then type in (load "A2") \
+Or, use the attatched abcl compiler. \
 You will get repl testing for answer-whq, followed by answer-question, followed by answer-question-nicely \
 
 # Inputs you can try: 
